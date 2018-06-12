@@ -20,15 +20,7 @@ void SpiFlash::begin() {
 	}
 
 	// Send release from powerdown 0xab
-	uint8_t txBuf[1];
-	txBuf[0] = 0xab;
-
-	beginTransaction();
-	spi.transfer(txBuf, NULL, sizeof(txBuf), NULL);
-	endTransaction();
-
-	// Need to wait tres (3 microseconds) before issuing the next command
-	delayMicroseconds(3);
+	wakeFromSleep();
 }
 
 bool SpiFlash::isValid() {
@@ -272,6 +264,34 @@ void SpiFlash::resetDevice() {
 
 	delayMicroseconds(1);
 }
+
+void SpiFlash::wakeFromSleep() {
+	// Send release from powerdown 0xab
+	uint8_t txBuf[1];
+	txBuf[0] = 0xab;
+
+	beginTransaction();
+	spi.transfer(txBuf, NULL, sizeof(txBuf), NULL);
+	endTransaction();
+
+	// Need to wait tres (3 microseconds) before issuing the next command
+	delayMicroseconds(3);
+}
+
+// Note: not all chips support this. Macronix does.
+void SpiFlash::deepPowerDown() {
+
+	uint8_t txBuf[1];
+	txBuf[0] = 0xb9;
+
+	beginTransaction();
+	spi.transfer(txBuf, NULL, sizeof(txBuf), NULL);
+	endTransaction();
+
+	// Need to wait tdp (10 microseconds) before issuing the next command, but since we're probably doing
+	// this before sleep, it's not necessary
+}
+
 
 void SpiFlash::writeEnable() {
 	uint8_t txBuf[1];

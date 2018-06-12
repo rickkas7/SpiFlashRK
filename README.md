@@ -78,6 +78,82 @@ Note that the SS/CS line can be any available GPIO pin, not just the one specifi
 ![SOIC Adapter](images/soic.jpg)
 
 
+
 ## The API
 
 The API is described in the SpiFlashRK.h file. But you will rarely need to use the low-level API directly.
+## Members
+
+
+#### `public void `[`begin`](#class_spi_flash_base_1ac15f0d887b3f63e95c38fa07ad27b4ad)`()` 
+
+Call begin, probably from setup(). The initializes the SPI object.
+
+#### `public bool `[`isValid`](#class_spi_flash_base_1a1a556af53af5b4a535091ac48ccddf9d)`()` 
+
+Returns true if there is a flash chip present and it appears to be the correct manufacturer code.
+
+#### `public uint32_t `[`jedecIdRead`](#class_spi_flash_base_1aaafb065389237c90ed89ea61a1992743)`()` 
+
+Gets the JEDEC ID for the flash device.
+
+#### Returns
+A 32-bit value containing the manufacturer ID and the two device IDs:
+
+- byte[0] manufacturer ID mask 0x00ff0000 
+- byte[1] device ID 1 mask 0x0000ff00 
+- byte[2] device ID 2 mask 0x000000ff
+
+#### `public void `[`readData`](#class_spi_flash_base_1a053c787ed441aee2830629cf077ed3b4)`(size_t addr,void * buf,size_t bufLen)` 
+
+Reads data synchronously. Reads data correctly across page boundaries.
+
+#### Parameters
+* `addr` The address to read from 
+
+* `buf` The buffer to store data in 
+
+* `bufLen` The number of bytes to read
+
+#### `public void `[`writeData`](#class_spi_flash_base_1ac47ed89cd11ad72a1e877c59cf3e2ab7)`(size_t addr,const void * buf,size_t bufLen)` 
+
+Writes data synchronously. Can write data across page boundaries.
+
+#### Parameters
+* `addr` The address to read from 
+
+* `buf` The buffer to store data in 
+
+* `bufLen` The number of bytes to write
+
+#### `public void `[`sectorErase`](#class_spi_flash_base_1abcab7312a96d40530981b06199b7dc9c)`(size_t addr)` 
+
+Erases a sector. Sectors are sectorSize bytes and the smallest unit that can be erased.
+
+This call blocks for the duration of the erase, which take take some time (up to 500 milliseconds).
+
+#### Parameters
+* `addr` Address of the beginning of the sector. Must be at the start of a sector boundary.
+
+#### `public void `[`chipErase`](#class_spi_flash_base_1a22edd97067f1783351a4ee542c792007)`()` 
+
+Erases the entire chip.
+
+This call blocks for the duration of the erase, which take take some time (several secoonds). This function uses delay(1) so the cloud connection will be serviced in non-system-threaded mode.
+
+#### `public inline size_t `[`getPageSize`](#class_spi_flash_base_1aebe4fbac5fbc17289682445968c4cd04)`() const` 
+
+Gets the page size (default: 256)
+
+#### `public inline `[`SpiFlashBase`](#class_spi_flash_base)` & `[`withPageSize`](#class_spi_flash_base_1a15345e20dd9986ef96b53e4cb86bf5b6)`(size_t value)` 
+
+Sets the page size (default: 256)
+
+#### `public inline size_t `[`getSectorSize`](#class_spi_flash_base_1a67d9998c73e8e4b8afe78b445516f745)`() const` 
+
+Gets the sector size (default: 4096)
+
+#### `public inline `[`SpiFlashBase`](#class_spi_flash_base)` & `[`withSectorSize`](#class_spi_flash_base_1a36a4e723f2acdd6fa4fb17b6d6e23d34)`(size_t value)` 
+
+Sets the sector size (default: 4096)
+

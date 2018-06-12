@@ -212,6 +212,17 @@ public:
 	void resetDevice();
 
 	/**
+	 * @brief Wakes the chip from sleep. Not normally necessary, except when doing deep power down on Macronix chips
+	 */
+	void wakeFromSleep();
+
+	/**
+	 * @brief Deep power down. Only supported by Macronix.
+	 */
+	void deepPowerDown();
+
+
+	/**
 	 * @brief Sets the page size (default: 256)
 	 */
 	inline SpiFlash &withPageSize(size_t value) { pageSize = value; return *this; };
