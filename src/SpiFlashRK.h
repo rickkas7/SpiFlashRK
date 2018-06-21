@@ -233,6 +233,11 @@ public:
 	inline SpiFlash &withSectorSize(size_t value) { sectorSize = value; return *this; };
 
 	/**
+	 * @brief Sets the SPI clock speed (default: 30 MHz)
+	 */
+	inline SpiFlash &withSpiClockSpeedMHz(uint8_t value) { spiClockSpeedMHz = value; return *this; };
+
+	/**
 	 * @brief Sets shared bus mode
 	 *
 	 * In shared bus mode, every SPI transaction will reset the SPI mode, speed, and bit order. This is useful if you

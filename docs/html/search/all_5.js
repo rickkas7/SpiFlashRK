@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['manufacturerid',['manufacturerId',['../class_spi_flash.html#a20a94f52060316713279887d9b57cd98',1,'SpiFlash']]]
+  ['jedecidread',['jedecIdRead',['../class_spi_flash_base.html#aaafb065389237c90ed89ea61a1992743',1,'SpiFlashBase::jedecIdRead()'],['../class_spi_flash.html#abf1a4708f44e2e7a3f745837b0983b4e',1,'SpiFlash::jedecIdRead()']]]
 ];

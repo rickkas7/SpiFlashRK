@@ -6,6 +6,8 @@ This library provides access to SPI NOR flash chips on the Particle platform. It
 
 You probably won't use this library directly; it's intended by be used as the hardware interface for a library that provides easier access, wear-leveling, flash translation, etc.. I recommend the SpiffsParticleRK library.
 
+The full browsable API documentation can be found [here](http://rickkas7.github.io/SpiFlashRK/).
+
 ## Instantiating an object
 
 You typically instantiate an object to interface to the flash chip as a global variable:

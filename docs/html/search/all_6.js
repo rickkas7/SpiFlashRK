@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['pageprogramtimeoutms',['pageProgramTimeoutMs',['../class_spi_flash.html#a76b35d6dedb6e1182a50d94c6beee58b',1,'SpiFlash']]]
+  ['manufacturerid',['manufacturerId',['../class_spi_flash.html#a20a94f52060316713279887d9b57cd98',1,'SpiFlash']]]
 ];

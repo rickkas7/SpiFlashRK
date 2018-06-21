@@ -1,11 +1,14 @@
 var searchData=
 [
-  ['waitforwritecomplete',['waitForWriteComplete',['../class_spi_flash.html#aa849d42c247461ae9a5fa8169819fb03',1,'SpiFlash']]],
-  ['waitwritecompletiontimeoutms',['waitWriteCompletionTimeoutMs',['../class_spi_flash.html#ad640c464918b7ce1ab7857a6b3c37a77',1,'SpiFlash']]],
-  ['withpagesize',['withPageSize',['../class_spi_flash_base.html#a15345e20dd9986ef96b53e4cb86bf5b6',1,'SpiFlashBase::withPageSize()'],['../class_spi_flash.html#a8ae5cf532ca0c433ffb397b149429b51',1,'SpiFlash::withPageSize()']]],
-  ['withsectorsize',['withSectorSize',['../class_spi_flash_base.html#a36a4e723f2acdd6fa4fb17b6d6e23d34',1,'SpiFlashBase::withSectorSize()'],['../class_spi_flash.html#ac21a4550fcf7ea4be9cb0146f88e44fa',1,'SpiFlash::withSectorSize()']]],
-  ['withsharedbus',['withSharedBus',['../class_spi_flash.html#a4872b97b4a6e8155f23a751dbcf0189c',1,'SpiFlash']]],
-  ['writedata',['writeData',['../class_spi_flash_base.html#ac47ed89cd11ad72a1e877c59cf3e2ab7',1,'SpiFlashBase::writeData()'],['../class_spi_flash.html#ab2266f90b4da9bf7ccff5d585837223c',1,'SpiFlash::writeData()']]],
-  ['writeenabledelayus',['writeEnableDelayUs',['../class_spi_flash.html#a8eba08942aacf288741adaca2da8865c',1,'SpiFlash']]],
-  ['writestatus',['writeStatus',['../class_spi_flash.html#aeca71eec248339fc11cfb8526b851a84',1,'SpiFlash']]]
+  ['spiflashrk',['SpiFlashRK',['../index.html',1,'']]],
+  ['sectorerase',['sectorErase',['../class_spi_flash_base.html#abcab7312a96d40530981b06199b7dc9c',1,'SpiFlashBase::sectorErase()'],['../class_spi_flash.html#ad4f5576f1b69fd4549a4cd18a37450ff',1,'SpiFlash::sectorErase()']]],
+  ['sectorerasetimeoutms',['sectorEraseTimeoutMs',['../class_spi_flash.html#afe15af6de6e514dbc725b87f0d056b74',1,'SpiFlash']]],
+  ['spibitorder',['spiBitOrder',['../class_spi_flash.html#a4349b115247debcb1d06abfa7e7e2d34',1,'SpiFlash']]],
+  ['spiclockspeedmhz',['spiClockSpeedMHz',['../class_spi_flash.html#ab3a913c727a8bbb692046caa5ff46116',1,'SpiFlash']]],
+  ['spidatamode',['spiDataMode',['../class_spi_flash.html#ab65ae80ce126499f2ab7da54e7e21393',1,'SpiFlash']]],
+  ['spiflash',['SpiFlash',['../class_spi_flash.html',1,'']]],
+  ['spiflashbase',['SpiFlashBase',['../class_spi_flash_base.html',1,'']]],
+  ['spiflashissi',['SpiFlashISSI',['../class_spi_flash_i_s_s_i.html',1,'']]],
+  ['spiflashmacronix',['SpiFlashMacronix',['../class_spi_flash_macronix.html',1,'']]],
+  ['spiflashwinbond',['SpiFlashWinbond',['../class_spi_flash_winbond.html',1,'']]]
 ];
