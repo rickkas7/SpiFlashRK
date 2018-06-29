@@ -9,6 +9,7 @@
 #ifndef __SPIFLASHRK_H
 #define __SPIFLASHRK_H
 
+#include "Particle.h"
 
 /**
  * @brief Pure virtual base class SPI for SpiFlash devices

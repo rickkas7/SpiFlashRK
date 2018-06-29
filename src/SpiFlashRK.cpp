@@ -322,7 +322,7 @@ void SpiFlashP1::begin() {
 	sFLASH_Init();
 }
 
-virtual bool isValid() {
+bool SpiFlashP1::isValid() {
 	// TODO: Check the value from jedecIdRead
 	return true;
 }
