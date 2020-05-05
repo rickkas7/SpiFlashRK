@@ -1,0 +1,7 @@
+- build: examples/1-unittest-SpiFlashRK
+  photon: [latest]
+  electron: [1.0.0, latest]
+  argon: [0.9.0, latest]
+  boron: [0.9.0, latest]
+- build: examples/2-unittest-winbond
+  electron: [1.5.0,1.5.1-rc.1]

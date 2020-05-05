@@ -159,3 +159,8 @@ Gets the sector size (default: 4096)
 
 Sets the sector size (default: 4096)
 
+## Version History
+
+### 0.0.6 (2020-05-04)
+
+- Fix compiler error for undefined conversion to SpiClass with 1.5.1-rc.1.

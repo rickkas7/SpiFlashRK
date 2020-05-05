@@ -115,6 +115,24 @@ public:
 	SpiFlash(SPIClass &spi, int cs);
 	virtual ~SpiFlash();
 
+#ifdef SYSTEM_VERSION_v151RC1
+	// In 1.5.0-rc.1, SPI interfaces are handled differently. You can still pass in SPI, SPI1, etc.
+	// but the code to handle it varies
+	SpiFlash(::particle::SpiProxy<HAL_SPI_INTERFACE1> &spiProxy, int cs = A2) : 
+		spi(spiProxy.instance()), cs(cs) {};
+		
+#if Wiring_SPI1
+	SpiFlash(::particle::SpiProxy<HAL_SPI_INTERFACE2> &spiProxy, int cs = D5) : 
+		spi(spiProxy.instance()), cs(cs) {};
+#endif
+
+#if Wiring_SPI2
+	SpiFlash(::particle::SpiProxy<HAL_SPI_INTERFACE3> &spiProxy, int cs = A2) : 
+		spi(spiProxy.instance()), cs(cs) {};
+#endif
+
+#endif
+
 	/**
 	 * @brief Call begin, probably from setup(). The initializes the SPI object.
 	 */
@@ -355,13 +373,41 @@ private:
  */
 class SpiFlashISSI : public SpiFlash {
 public:
-	inline SpiFlashISSI(SPIClass &spi, int cs) : SpiFlash(spi, cs) {
+	void setSettings() {
 		sectorEraseTimeoutMs = 300;
 		pageProgramTimeoutMs = 10; // 1 ms actually
 		chipEraseTimeoutMs = 6000;
 		manufacturerId = 0x9d;
 		writeEnableDelayUs = 3;
 	}
+
+	inline SpiFlashISSI(SPIClass &spi, int cs) : SpiFlash(spi, cs) {
+		setSettings();
+	}
+
+#ifdef SYSTEM_VERSION_v151RC1
+	// In 1.5.0-rc.1, SPI interfaces are handled differently. You can still pass in SPI, SPI1, etc.
+	// but the code to handle it varies
+	SpiFlashISSI(::particle::SpiProxy<HAL_SPI_INTERFACE1> &spiProxy, int cs = A2) : 
+		SpiFlash(spiProxy.instance(), cs) {
+		setSettings();
+	};
+		
+#if Wiring_SPI1
+	SpiFlashISSI(::particle::SpiProxy<HAL_SPI_INTERFACE2> &spiProxy, int cs = D5) : 
+		SpiFlash(spiProxy.instance(), cs)  {
+		setSettings();
+	};
+#endif
+
+#if Wiring_SPI2
+	SpiFlashISSI(::particle::SpiProxy<HAL_SPI_INTERFACE3> &spiProxy, int cs = A2) : 
+		SpiFlash(spiProxy.instance(), cs)  {
+		setSettings();
+	};
+#endif
+
+#endif
 };
 
 /**
@@ -369,13 +415,40 @@ public:
  */
 class SpiFlashWinbond : public SpiFlash {
 public:
-	inline SpiFlashWinbond(SPIClass &spi, int cs) : SpiFlash(spi, cs) {
+	void setSettings() {
 		sectorEraseTimeoutMs = 500;
 		pageProgramTimeoutMs = 10; // 3 ms actually
 		chipEraseTimeoutMs = 50000;
 		manufacturerId = 0xef;
 		writeEnableDelayUs = 0;
 	}
+	inline SpiFlashWinbond(SPIClass &spi, int cs) : SpiFlash(spi, cs) {
+		setSettings();
+	}
+
+#ifdef SYSTEM_VERSION_v151RC1
+	// In 1.5.0-rc.1, SPI interfaces are handled differently. You can still pass in SPI, SPI1, etc.
+	// but the code to handle it varies
+	SpiFlashWinbond(::particle::SpiProxy<HAL_SPI_INTERFACE1> &spiProxy, int cs = A2) : 
+		SpiFlash(spiProxy.instance(), cs) {
+		setSettings();
+	};
+		
+#if Wiring_SPI1
+	SpiFlashWinbond(::particle::SpiProxy<HAL_SPI_INTERFACE2> &spiProxy, int cs = D5) : 
+		SpiFlash(spiProxy.instance(), cs)  {
+		setSettings();
+	};
+#endif
+
+#if Wiring_SPI2
+	SpiFlashWinbond(::particle::SpiProxy<HAL_SPI_INTERFACE3> &spiProxy, int cs = A2) : 
+		SpiFlash(spiProxy.instance(), cs)  {
+		setSettings();
+	};
+#endif
+
+#endif
 };
 
 /**
@@ -383,13 +456,41 @@ public:
  */
 class SpiFlashMacronix : public SpiFlash {
 public:
-	inline SpiFlashMacronix(SPIClass &spi, int cs) : SpiFlash(spi, cs) {
+	void setSettings() {
 		sectorEraseTimeoutMs = 200;
 		pageProgramTimeoutMs = 10; // 1 ms actually
  		chipEraseTimeoutMs = 6000;
 		manufacturerId = 0xc2;
 		writeEnableDelayUs = 0;
 	}
+
+	inline SpiFlashMacronix(SPIClass &spi, int cs) : SpiFlash(spi, cs) {
+		setSettings();
+	}
+
+#ifdef SYSTEM_VERSION_v151RC1
+	// In 1.5.0-rc.1, SPI interfaces are handled differently. You can still pass in SPI, SPI1, etc.
+	// but the code to handle it varies
+	SpiFlashMacronix(::particle::SpiProxy<HAL_SPI_INTERFACE1> &spiProxy, int cs = A2) : 
+		SpiFlash(spiProxy.instance(), cs) {
+		setSettings();
+	};
+		
+#if Wiring_SPI1
+	SpiFlashMacronix(::particle::SpiProxy<HAL_SPI_INTERFACE2> &spiProxy, int cs = D5) : 
+		SpiFlash(spiProxy.instance(), cs)  {
+		setSettings();
+	};
+#endif
+
+#if Wiring_SPI2
+	SpiFlashMacronix(::particle::SpiProxy<HAL_SPI_INTERFACE3> &spiProxy, int cs = A2) : 
+		SpiFlash(spiProxy.instance(), cs)  {
+		setSettings();
+	};
+#endif
+
+#endif
 
 };
 
