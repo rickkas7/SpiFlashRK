@@ -4,8 +4,7 @@
 
 
 SpiFlash::SpiFlash(SPIClass &spi, int cs) : spi(spi), cs(cs) {
-
-}
+	}
 
 SpiFlash::~SpiFlash() {
 
@@ -13,11 +12,8 @@ SpiFlash::~SpiFlash() {
 
 void SpiFlash::begin() {
 	spi.begin(cs);
-	digitalWrite(cs, HIGH);
 
-	if (!sharedBus) {
-		setSpiSettings();
-	}
+	digitalWrite(cs, HIGH);
 
 	// Send release from powerdown 0xab
 	wakeFromSleep();
@@ -31,13 +27,10 @@ bool SpiFlash::isValid() {
 
 
 void SpiFlash::beginTransaction() {
-	if (sharedBus) {
-		setSpiSettings();
-		// Changing the SPI settings seems to leave the bus unstable for a period of time.
-		if (sharedBusDelay != 0) {
-			delayMicroseconds(sharedBusDelay);
-		}
-	}
+	
+	__SPISettings settings(spiClockSpeedMHz * MHZ, spiBitOrder, spiDataMode);
+
+	spi.beginTransaction(settings);
 	pinResetFast(cs);
 
 	// There is some code to do this in the STM32F2xx HAL, but I don't think it's necessary to put
@@ -47,14 +40,8 @@ void SpiFlash::beginTransaction() {
 
 void SpiFlash::endTransaction() {
 	pinSetFast(cs);
+	spi.endTransaction();
 }
-
-void SpiFlash::setSpiSettings() {
-	spi.setBitOrder(spiBitOrder); // Default: MSBFIRST
-	spi.setClockSpeed(spiClockSpeedMHz, MHZ); // Default: 30
-	spi.setDataMode(SPI_MODE3); // Default: SPI_MODE3
-}
-
 
 uint32_t SpiFlash::jedecIdRead() {
 

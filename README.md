@@ -161,6 +161,10 @@ Sets the sector size (default: 4096)
 
 ## Version History
 
+### 0.0.7 (2020-10-29)
+
+- SPI transaction implementation fixed to use actual beginTransaction()/endTransaction() for compatibile with multiple SPI devices.
+
 ### 0.0.6 (2020-05-04)
 
 - Fix compiler error for undefined conversion to SpiClass with 1.5.1-rc.1.

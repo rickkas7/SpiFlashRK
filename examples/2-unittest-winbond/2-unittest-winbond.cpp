@@ -3,12 +3,14 @@
 #include "SpiFlashRK.h"
 
 SYSTEM_THREAD(ENABLED);
+SYSTEM_MODE(MANUAL);
 
 SerialLogHandler logHandler(LOG_LEVEL_TRACE);
 
 // Pick a chip, port, and CS line
 // SpiFlashISSI spiFlash(SPI, A2);
 SpiFlashWinbond spiFlash(SPI, A2);
+// SpiFlashMacronix spiFlash(SPI, A4);
 // SpiFlashWinbond spiFlash(SPI1, D5);
 //SpiFlashMacronix spiFlash(SPI1, D5);
 
@@ -30,7 +32,9 @@ public:
 };
 
 void setup() {
-	Serial.begin();
+	// Wait for a USB serial connection for up to 10 seconds
+  	waitFor(Serial.isConnected, 10000);
+  	
 	spiFlash.begin();
 
 }

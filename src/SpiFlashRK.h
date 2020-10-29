@@ -115,24 +115,6 @@ public:
 	SpiFlash(SPIClass &spi, int cs);
 	virtual ~SpiFlash();
 
-#ifdef SYSTEM_VERSION_v151RC1
-	// In 1.5.0-rc.1, SPI interfaces are handled differently. You can still pass in SPI, SPI1, etc.
-	// but the code to handle it varies
-	SpiFlash(::particle::SpiProxy<HAL_SPI_INTERFACE1> &spiProxy, int cs = A2) : 
-		spi(spiProxy.instance()), cs(cs) {};
-		
-#if Wiring_SPI1
-	SpiFlash(::particle::SpiProxy<HAL_SPI_INTERFACE2> &spiProxy, int cs = D5) : 
-		spi(spiProxy.instance()), cs(cs) {};
-#endif
-
-#if Wiring_SPI2
-	SpiFlash(::particle::SpiProxy<HAL_SPI_INTERFACE3> &spiProxy, int cs = A2) : 
-		spi(spiProxy.instance()), cs(cs) {};
-#endif
-
-#endif
-
 	/**
 	 * @brief Call begin, probably from setup(). The initializes the SPI object.
 	 */
@@ -259,14 +241,11 @@ public:
 	/**
 	 * @brief Sets shared bus mode
 	 *
-	 * In shared bus mode, every SPI transaction will reset the SPI mode, speed, and bit order. This is useful if you
-	 * have multiple devices on a single SPI bus with different settings. The problem is that this appears to cause
-	 * data corruption on the STM32F205 unless you wait a bit after changing the settings. This apparently required
-	 * delay is set using the delayus parameter.
-	 *
 	 * @param delayus Amount of time in microseconds to delay after changing SPI settings to allow the bus to settle.
+	 * 
+	 * This is no longer necessary and is only included for backward compatibility and does nothing.
 	 */
-	inline SpiFlash &withSharedBus(unsigned long delayus) { sharedBus = true; sharedBusDelay = delayus; return *this;};
+	inline SpiFlash &withSharedBus(unsigned long delayus) { return *this;};
 
 protected:
 	// Flags for the status register
@@ -346,26 +325,12 @@ private:
 	void endTransaction();
 
 	/**
-	 * @brief Sets the SPI bus speed, mode and byte order
-	 *
-	 * This is done in begin() normally or in beginTransaction() if sharedBus == true.
-	 *
-	 * The issue is that changing the bus speed and settings requires a delay for things to
-	 * sync back up. If the SPI flash is the only thing on that bus, the delay is unnecessary
-	 * because the speed and mode can be set during begin() instead and just left that way.
-	 */
-	void setSpiSettings();
-
-	/**
 	 * @brief Sets a instruction code and an address (3-byte, 24-bit, big endian value).
 	 */
 	void setInstWithAddr(uint8_t inst, size_t addr, uint8_t *buf);
 
 	SPIClass &spi;
 	int cs;
-	bool sharedBus = false;
-
-	unsigned long sharedBusDelay = 200; // microseconds
 };
 
 /**
@@ -373,7 +338,7 @@ private:
  */
 class SpiFlashISSI : public SpiFlash {
 public:
-	void setSettings() {
+	inline SpiFlashISSI(SPIClass &spi, int cs) : SpiFlash(spi, cs) {
 		sectorEraseTimeoutMs = 300;
 		pageProgramTimeoutMs = 10; // 1 ms actually
 		chipEraseTimeoutMs = 6000;
@@ -381,33 +346,6 @@ public:
 		writeEnableDelayUs = 3;
 	}
 
-	inline SpiFlashISSI(SPIClass &spi, int cs) : SpiFlash(spi, cs) {
-		setSettings();
-	}
-
-#ifdef SYSTEM_VERSION_v151RC1
-	// In 1.5.0-rc.1, SPI interfaces are handled differently. You can still pass in SPI, SPI1, etc.
-	// but the code to handle it varies
-	SpiFlashISSI(::particle::SpiProxy<HAL_SPI_INTERFACE1> &spiProxy, int cs = A2) : 
-		SpiFlash(spiProxy.instance(), cs) {
-		setSettings();
-	};
-		
-#if Wiring_SPI1
-	SpiFlashISSI(::particle::SpiProxy<HAL_SPI_INTERFACE2> &spiProxy, int cs = D5) : 
-		SpiFlash(spiProxy.instance(), cs)  {
-		setSettings();
-	};
-#endif
-
-#if Wiring_SPI2
-	SpiFlashISSI(::particle::SpiProxy<HAL_SPI_INTERFACE3> &spiProxy, int cs = A2) : 
-		SpiFlash(spiProxy.instance(), cs)  {
-		setSettings();
-	};
-#endif
-
-#endif
 };
 
 /**
@@ -415,40 +353,14 @@ public:
  */
 class SpiFlashWinbond : public SpiFlash {
 public:
-	void setSettings() {
+	inline SpiFlashWinbond(SPIClass &spi, int cs) : SpiFlash(spi, cs) {
 		sectorEraseTimeoutMs = 500;
 		pageProgramTimeoutMs = 10; // 3 ms actually
 		chipEraseTimeoutMs = 50000;
 		manufacturerId = 0xef;
 		writeEnableDelayUs = 0;
 	}
-	inline SpiFlashWinbond(SPIClass &spi, int cs) : SpiFlash(spi, cs) {
-		setSettings();
-	}
 
-#ifdef SYSTEM_VERSION_v151RC1
-	// In 1.5.0-rc.1, SPI interfaces are handled differently. You can still pass in SPI, SPI1, etc.
-	// but the code to handle it varies
-	SpiFlashWinbond(::particle::SpiProxy<HAL_SPI_INTERFACE1> &spiProxy, int cs = A2) : 
-		SpiFlash(spiProxy.instance(), cs) {
-		setSettings();
-	};
-		
-#if Wiring_SPI1
-	SpiFlashWinbond(::particle::SpiProxy<HAL_SPI_INTERFACE2> &spiProxy, int cs = D5) : 
-		SpiFlash(spiProxy.instance(), cs)  {
-		setSettings();
-	};
-#endif
-
-#if Wiring_SPI2
-	SpiFlashWinbond(::particle::SpiProxy<HAL_SPI_INTERFACE3> &spiProxy, int cs = A2) : 
-		SpiFlash(spiProxy.instance(), cs)  {
-		setSettings();
-	};
-#endif
-
-#endif
 };
 
 /**
@@ -456,41 +368,13 @@ public:
  */
 class SpiFlashMacronix : public SpiFlash {
 public:
-	void setSettings() {
+	inline SpiFlashMacronix(SPIClass &spi, int cs) : SpiFlash(spi, cs) {
 		sectorEraseTimeoutMs = 200;
 		pageProgramTimeoutMs = 10; // 1 ms actually
  		chipEraseTimeoutMs = 6000;
 		manufacturerId = 0xc2;
 		writeEnableDelayUs = 0;
 	}
-
-	inline SpiFlashMacronix(SPIClass &spi, int cs) : SpiFlash(spi, cs) {
-		setSettings();
-	}
-
-#ifdef SYSTEM_VERSION_v151RC1
-	// In 1.5.0-rc.1, SPI interfaces are handled differently. You can still pass in SPI, SPI1, etc.
-	// but the code to handle it varies
-	SpiFlashMacronix(::particle::SpiProxy<HAL_SPI_INTERFACE1> &spiProxy, int cs = A2) : 
-		SpiFlash(spiProxy.instance(), cs) {
-		setSettings();
-	};
-		
-#if Wiring_SPI1
-	SpiFlashMacronix(::particle::SpiProxy<HAL_SPI_INTERFACE2> &spiProxy, int cs = D5) : 
-		SpiFlash(spiProxy.instance(), cs)  {
-		setSettings();
-	};
-#endif
-
-#if Wiring_SPI2
-	SpiFlashMacronix(::particle::SpiProxy<HAL_SPI_INTERFACE3> &spiProxy, int cs = A2) : 
-		SpiFlash(spiProxy.instance(), cs)  {
-		setSettings();
-	};
-#endif
-
-#endif
 
 };
 
