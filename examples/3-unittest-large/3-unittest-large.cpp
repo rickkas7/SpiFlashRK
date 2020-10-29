@@ -1,3 +1,4 @@
+// Test for Macronix MX25L25645G (256 Mbit/32 Mbyte) that requires 32-bit addressing mode
 #include "Particle.h"
 
 #include "SpiFlashRK.h"
@@ -47,6 +48,10 @@ void runTestSuite() {
 		Log.error("no valid flash chip");
 		return;
 	}
+
+    spiFlash.enable4ByteAddressing();
+
+    Log.info("Note: chipErase will take more than 3 minutes on the 256 Mbit flash chips!");
 
 	{
 		LogTime time("chipErase");
@@ -207,34 +212,72 @@ void runTestSuite() {
 		LogTime time("sectorErase");
 		spiFlash.sectorErase(8192);
 	}
+    // Make sure writes are working above
+	{
+		LogTime time("verify sector erase");
+        srand(0);
+
+        for(size_t pageCount = 0; pageCount < 1024; pageCount++) {
+            memset(buf1, 0, sizeof(buf1));
+            spiFlash.readData(4096 + pageCount * 256, buf1, sizeof(buf1));
+
+            if (pageCount < 16 || pageCount >= 32) {
+                for(size_t ii = 0; ii < sizeof(buf1); ii++) {
+                    if (buf1[ii] != (uint8_t)rand()) {
+                        Log.error("failure line %d ii=%d value=%02x", __LINE__, ii, buf1[ii]);
+                        return;
+                    }
+                }
+            }
+            else {
+                for(size_t ii = 0; ii < sizeof(buf1); ii++) {
+                    rand();
+                    if (buf1[ii] != 0xff) {
+                        Log.error("failure line %d ii=%d value=%02x", __LINE__, ii, buf1[ii]);
+                        return;
+                    }
+                }
+            }
+
+        }
+    }
+
 
 	{
-			srand(0);
+		LogTime time("verify read/write in 32-bit mode");
 
-			for(size_t pageCount = 0; pageCount < 1024; pageCount++) {
-				memset(buf1, 0, sizeof(buf1));
-				spiFlash.readData(4096 + pageCount * 256, buf1, sizeof(buf1));
+        srand(0);
 
-				if (pageCount < 16 || pageCount >= 32) {
-					for(size_t ii = 0; ii < sizeof(buf1); ii++) {
-						if (buf1[ii] != (uint8_t)rand()) {
-							Log.error("failure line %d ii=%d value=%02x", __LINE__, ii, buf1[ii]);
-							return;
-						}
-					}
-				}
-				else {
-					for(size_t ii = 0; ii < sizeof(buf1); ii++) {
-						rand();
-						if (buf1[ii] != 0xff) {
-							Log.error("failure line %d ii=%d value=%02x", __LINE__, ii, buf1[ii]);
-							return;
-						}
-					}
-				}
+        for(size_t ii = 0; ii < 512; ii++) {
+			buf2[ii] = (uint8_t) rand();
+        }
 
-			}
-		}
+        size_t boundary = 16777216; // 2^24
+
+        spiFlash.writeData(boundary - 256, buf2, 256);
+        spiFlash.writeData(boundary, &buf2[256], 256);
+        
+
+        memset(buf1, 0, 256);
+        spiFlash.readData(boundary - 256, buf1, 256);
+        for(size_t ii = 0; ii < 256; ii++) {
+            if (buf1[ii] != buf2[ii]) {
+                Log.error("failure line %d ii=%d value=%02x expected=%02x", __LINE__, ii, buf1[ii], buf2[ii]);
+                return;
+            }
+        }
+
+        memset(buf1, 0, 256);
+        spiFlash.readData(boundary, buf1, 256);
+        for(size_t ii = 0; ii < 256; ii++) {
+            if (buf1[ii] != buf2[ii + 256]) {
+                Log.error("failure line %d ii=%d value=%02x expected=%02x", __LINE__, ii, buf1[ii], buf2[ii + 256]);
+                return;
+            }
+        }
+
+	}
+
 
 	Log.info("test complete!");
 
@@ -247,5 +290,6 @@ void loop() {
 
 	runTestSuite();
 }
+
 
 

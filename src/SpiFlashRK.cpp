@@ -114,12 +114,12 @@ void SpiFlash::readData(size_t addr, void *buf, size_t bufLen) {
 			count = bufLen;
 		}
 
-		uint8_t txBuf[4];
+		uint8_t txBuf[5];
 
 		setInstWithAddr(0x03, addr, txBuf); // READ
 
 		beginTransaction();
-		spi.transfer(txBuf, NULL, sizeof(txBuf), NULL);
+		spi.transfer(txBuf, NULL, getInstWithAddrSize(), NULL);
 		spi.transfer(NULL, curBuf, bufLen, NULL);
 		endTransaction();
 
@@ -131,10 +131,18 @@ void SpiFlash::readData(size_t addr, void *buf, size_t bufLen) {
 
 
 void SpiFlash::setInstWithAddr(uint8_t inst, size_t addr, uint8_t *buf) {
-	buf[0] = inst;
-	buf[1] = (uint8_t) (addr >> 16);
-	buf[2] = (uint8_t) (addr >> 8);
-	buf[3] = (uint8_t) addr;
+	uint8_t *p = buf;
+	*p++ = inst;
+	if (addr4byte) {
+		*p++ = (uint8_t) (addr >> 24);
+	}
+	*p++ = (uint8_t) (addr >> 16);
+	*p++ = (uint8_t) (addr >> 8);
+	*p++ = (uint8_t) addr;
+}
+
+size_t SpiFlash::getInstWithAddrSize() const {
+	return addr4byte ? 5 : 4;	
 }
 
 
@@ -154,14 +162,14 @@ void SpiFlash::writeData(size_t addr, const void *buf, size_t bufLen) {
 
 		// Log.info("writeData addr=%lx pageOffset=%lu pageStart=%lu count=%lu pageSize=%lu", addr, pageOffset, pageStart, count, pageSize);
 
-		uint8_t txBuf[4];
+		uint8_t txBuf[5];
 
 		setInstWithAddr(0x02, addr, txBuf); // PAGE_PROG
 
 		writeEnable();
 
 		beginTransaction();
-		spi.transfer(txBuf, NULL, sizeof(txBuf), NULL);
+		spi.transfer(txBuf, NULL, getInstWithAddrSize(), NULL);
 		spi.transfer(curBuf, NULL, count, NULL);
 		endTransaction();
 
@@ -178,7 +186,7 @@ void SpiFlash::writeData(size_t addr, const void *buf, size_t bufLen) {
 void SpiFlash::sectorErase(size_t addr) {
 	waitForWriteComplete();
 
-	uint8_t txBuf[4];
+	uint8_t txBuf[5];
 
 	// Log.trace("sectorEraseCmd=%02x", sectorEraseCmd);
 
@@ -191,7 +199,7 @@ void SpiFlash::sectorErase(size_t addr) {
 	writeEnable();
 
 	beginTransaction();
-	spi.transfer(txBuf, NULL, sizeof(txBuf), NULL);
+	spi.transfer(txBuf, NULL, getInstWithAddrSize(), NULL);
 	endTransaction();
 
 	waitForWriteComplete(sectorEraseTimeoutMs);
@@ -200,14 +208,14 @@ void SpiFlash::sectorErase(size_t addr) {
 void SpiFlash::blockErase(size_t addr) {
 	waitForWriteComplete();
 
-	uint8_t txBuf[4];
+	uint8_t txBuf[5];
 
 	setInstWithAddr(0xD8, addr, txBuf); // BLOCK_ER
 
 	writeEnable();
 
 	beginTransaction();
-	spi.transfer(txBuf, NULL, sizeof(txBuf), NULL);
+	spi.transfer(txBuf, NULL, getInstWithAddrSize(), NULL);
 	endTransaction();
 
 	waitForWriteComplete(chipEraseTimeoutMs);
@@ -293,6 +301,18 @@ void SpiFlash::writeEnable() {
 		delayMicroseconds(writeEnableDelayUs);
 	}
 }
+
+void SpiFlash::enable4ByteAddressing() {
+	addr4byte = true;
+
+	uint8_t txBuf[1];
+	txBuf[0] = 0xb7; // EN4B
+
+	beginTransaction();
+	spi.transfer(txBuf, NULL, sizeof(txBuf), NULL);
+	endTransaction();
+}
+
 
 #if PLATFORM_ID==8
 

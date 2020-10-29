@@ -224,6 +224,11 @@ public:
 
 
 	/**
+	 * @brief Enable 4-byte addressing mode for devices larger than 128 Mbit
+	 */
+	void enable4ByteAddressing();
+
+	/**
 	 * @brief Sets the page size (default: 256)
 	 */
 	inline SpiFlash &withPageSize(size_t value) { pageSize = value; return *this; };
@@ -325,12 +330,21 @@ private:
 	void endTransaction();
 
 	/**
-	 * @brief Sets a instruction code and an address (3-byte, 24-bit, big endian value).
+	 * @brief Sets a instruction code and an address 
+	 * 
+	 * 3-byte, 24-bit, big endian value, except wehn in 4 byte mode, when
+	 * it's 4-byte, 32-bit, big endian.
 	 */
 	void setInstWithAddr(uint8_t inst, size_t addr, uint8_t *buf);
 
+	/**
+	 * @brief Gets the size of setInstWithAddr, either 4 or 5 bytes
+	 */
+	size_t getInstWithAddrSize() const;
+
 	SPIClass &spi;
 	int cs;
+	bool addr4byte = false;
 };
 
 /**
@@ -365,13 +379,17 @@ public:
 
 /**
  * @brief Class for Macronix MX25L8006E, the suggested flash for the Particle E Series module
+ * 
+ * Timeout of 220 seconds is for the MX25L25645G (110-210 seconds). Note that chip erase
+ * only takes as long as is necessary; the timeout is only there in case the device
+ * never clears the WIP (write-in-progress) flag, which would be an odd error condition.
  */
 class SpiFlashMacronix : public SpiFlash {
 public:
 	inline SpiFlashMacronix(SPIClass &spi, int cs) : SpiFlash(spi, cs) {
 		sectorEraseTimeoutMs = 200;
 		pageProgramTimeoutMs = 10; // 1 ms actually
- 		chipEraseTimeoutMs = 6000;
+ 		chipEraseTimeoutMs = 220000;
 		manufacturerId = 0xc2;
 		writeEnableDelayUs = 0;
 	}
