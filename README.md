@@ -161,10 +161,10 @@ Sets the sector size (default: 4096)
 
 ## Version History
 
-### 0.0.8 (2020-10-29)
+### 0.0.9 (2020-10-30)
 
 - Increased Macronix chip erase timeout from 6000 to 240000 ms to deal with larger chips (like the MX25L25645G).
-- Add support for 4-byte addressing mode for chips larger than 128 Mbit (16 Mbyte). See enable4ByteAddressing().
+- Add support for 4-byte addressing mode for chips larger than 128 Mbit (16 Mbyte). See set4ByteAddressing().
 
 ### 0.0.7 (2020-10-29)
 

@@ -142,6 +142,11 @@ public:
 	uint8_t readStatus();
 
 	/**
+	 * @brief Reads the configuration register (RDCR)
+	 */
+	uint8_t readConfiguration();
+
+	/**
 	 * @brief Checks the status register and returns true if a write is in progress
 	 */
 	bool isWriteInProgress();
@@ -224,9 +229,14 @@ public:
 
 
 	/**
-	 * @brief Enable 4-byte addressing mode for devices larger than 128 Mbit
+	 * @brief Enable or disable 4-byte addressing mode for devices larger than 128 Mbit
+	 * 
+	 * @param enable Enable 4-byte addressing if true
+	 * 
+	 * The default power-on state is 3-byte addressing. 3-byte addressing is used if disabled,
+	 * power-on, or device reset.
 	 */
-	void enable4ByteAddressing();
+	bool set4ByteAddressing(bool enable);
 
 	/**
 	 * @brief Sets the page size (default: 256)

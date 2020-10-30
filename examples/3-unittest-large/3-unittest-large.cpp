@@ -42,6 +42,9 @@ void setup() {
 
 void runTestSuite() {
 	//
+    Log.info("resetDevice");
+    spiFlash.resetDevice();
+
 	Log.info("jedecId=%06lx", spiFlash.jedecIdRead());
 
 	if (!spiFlash.isValid()) {
@@ -49,7 +52,13 @@ void runTestSuite() {
 		return;
 	}
 
-    spiFlash.enable4ByteAddressing();
+    Log.info("enabling 4 byte addressing");
+    bool bResult = spiFlash.set4ByteAddressing(true);
+    if (!bResult) {
+		Log.error("failed to enable 4 byte addressing");
+		return;
+    }
+
 
     Log.info("Note: chipErase will take more than 3 minutes on the 256 Mbit flash chips!");
 

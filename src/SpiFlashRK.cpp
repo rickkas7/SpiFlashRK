@@ -67,6 +67,19 @@ uint8_t SpiFlash::readStatus() {
 	return rxBuf[1];
 }
 
+uint8_t SpiFlash::readConfiguration() {
+	uint8_t txBuf[2], rxBuf[2];
+	txBuf[0] = 0x15; // RDCR
+	txBuf[1] = 0;
+
+	beginTransaction();
+	spi.transfer(txBuf, rxBuf, sizeof(txBuf), NULL);
+	endTransaction();
+
+	return rxBuf[1];
+}
+
+
 bool SpiFlash::isWriteInProgress() {
 	return (readStatus() & STATUS_WIP) != 0;
 }
@@ -302,15 +315,32 @@ void SpiFlash::writeEnable() {
 	}
 }
 
-void SpiFlash::enable4ByteAddressing() {
-	addr4byte = true;
+bool SpiFlash::set4ByteAddressing(bool enable) {
 
 	uint8_t txBuf[1];
-	txBuf[0] = 0xb7; // EN4B
+	txBuf[0] = enable ? 0xb7 : 0xe9; // EN4B / EX4B
 
 	beginTransaction();
 	spi.transfer(txBuf, NULL, sizeof(txBuf), NULL);
 	endTransaction();
+
+	// Verify that the mode was set
+	uint8_t configReg = readConfiguration();
+	if ((configReg & 0x20) != 0) { // 4 BYTE
+		if (!enable) {
+			// Failed to disable
+			return false;
+		}
+	}
+	else {
+		if (enable) {
+			// Failed to enable
+			return false;
+		}
+	}
+
+	addr4byte = enable;
+	return true;
 }
 
 
